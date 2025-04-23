@@ -10,5 +10,6 @@ router.get('/:userId', checkoutController.getUserCheckout);
 router.get('/', checkoutController.getAllCheckouts);
 router.put('/:checkoutId', checkoutController.updateCheckoutStatus);
 router.delete('/:checkoutId', checkoutController.deleteCheckout);
+router.post('/payment-success', checkoutController.paymentSccess);
 
 module.exports = router;
