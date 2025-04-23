@@ -1,17 +1,25 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const CheckoutSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
 
     items: [
       {
-        productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true
+        },
         quantity: { type: Number, required: true },
-        selectedSize: { 
+        selectedSize: {
           type: String,
           required: true,
-          enum: ['S', 'M', 'L', 'XL', 'XXL'] // Assuming standard sizes
+          enum: ['S', 'M', 'L', 'XL', 'XXL']
         }
       }
     ],
@@ -46,9 +54,18 @@ const CheckoutSchema = new mongoose.Schema(
       type: String,
       enum: ['Pending', 'Confirmed', 'Delivered', 'Cancelled'],
       default: 'Pending'
+    },
+
+    // Razorpay related fields
+    razorpayOrderId: { type: String },
+    razorpayPaymentId: { type: String },
+    paymentStatus: {
+      type: String,
+      enum: ['Pending', 'Paid', 'Failed'],
+      default: 'Pending'
     }
   },
   { timestamps: true }
-);
+)
 
-module.exports = mongoose.model('Checkout', CheckoutSchema);
+module.exports = mongoose.model('Checkout', CheckoutSchema)
