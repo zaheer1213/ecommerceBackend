@@ -244,7 +244,9 @@ exports.getAllCheckouts = asyncHandler(async (req, res) => {
     // Fetch checkouts with pagination
     const checkouts = await Checkout.find()
       .populate('userId')
-      .populate('items.productId')
+      .populate({
+        path: 'items.productId'
+      })
       .skip(skip)
       .limit(Number(limit))
 
