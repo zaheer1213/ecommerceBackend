@@ -187,40 +187,6 @@ Best Regards,
   }
 })
 
-// exports.createCheckout = async (req, res) => {
-//     try {
-//         const { userId, address, shippingMethod, paymentMethod } = req.body;
-
-//         const cart = await Cart.findOne({ userId }).populate('items.productId');
-
-//         if (!cart || cart.items.length === 0) {
-//             return res.status(400).json({ error: 'Cart is empty' });
-//         }
-
-//         const totalAmount = cart.items.reduce((acc, item) => {
-//             return acc + item.productId.price * item.quantity;
-//         }, 0);
-
-//         const checkoutData = {
-//             userId,
-//             items: cart.items,
-//             totalAmount,
-//             shippingMethod,
-//             paymentMethod,
-//             address
-//         };
-
-//         const newCheckout = new Checkout(checkoutData);
-//         await newCheckout.save();
-
-//         // Clear Cart after Checkout
-//         await Cart.deleteOne({ userId });
-
-//         res.status(201).json({ message: 'Checkout successful', checkout: newCheckout });
-//     } catch (error) {
-//         res.status(500).json({ error: 'Checkout failed', details: error.message });
-//     }
-// };
 
 // Get Checkout by User
 exports.getUserCheckout = asyncHandler(async (req, res) => {
