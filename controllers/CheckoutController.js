@@ -66,7 +66,11 @@ exports.createCheckout = asyncHandler(async (req, res) => {
     // Transform Data to Match Schema
     const checkoutData = {
       userId,
-      items: cart.items,
+      items: cart.items.map(item => ({
+        productId: item.productId._id,
+        quantity: item.quantity,
+        selectedSize: item.selectedSize
+      })),
       totalAmount,
       shippingMethod,
       paymentMethod,
@@ -77,10 +81,11 @@ exports.createCheckout = asyncHandler(async (req, res) => {
         zip: address.zip,
         orderNotes: address.orderNotes
       },
-      phone: phone,
-      email: email,
-      status: status
+      phone,
+      email,
+      status
     }
+
 
     const newCheckout = new Checkout(checkoutData)
     await newCheckout.save()
@@ -204,33 +209,30 @@ exports.getUserCheckout = asyncHandler(async (req, res) => {
 // Get All Checkouts
 exports.getAllCheckouts = asyncHandler(async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query // Default to page 1, 10 results per page
-    const skip = (Number(page) - 1) * Number(limit)
+    const { page = 1, limit = 10 } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
 
-    // Fetch checkouts with pagination
     const checkouts = await Checkout.find()
-      .populate('userId')
-      .populate({
-        path: 'items.productId'
-      })
+      .populate([
+        { path: 'userId' },
+        { path: 'items.productId', model: 'Product' }
+      ])
       .skip(skip)
-      .limit(Number(limit))
+      .limit(Number(limit));
 
-    // Total checkouts count for pagination info
-    const totalCheckouts = await Checkout.countDocuments()
+    const totalCheckouts = await Checkout.countDocuments();
 
     res.status(200).json({
       checkouts,
       totalCheckouts,
       totalPages: Math.ceil(totalCheckouts / limit),
       currentPage: Number(page)
-    })
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Failed to fetch all checkouts', details: error.message })
+    res.status(500).json({ error: 'Failed to fetch all checkouts', details: error.message });
   }
-})
+});
+
 
 //   Update Checkout Status
 exports.updateCheckoutStatus = asyncHandler(async (req, res) => {
